@@ -1,10 +1,11 @@
 import { login, logout, getInfo } from '@/api/user'
-import { getToken, setToken, removeToken } from '@/utils/auth'
+import { getToken, setToken, removeToken, getTokenName, setTokenName } from '@/utils/auth'
 import { resetRouter } from '@/router'
 
 const getDefaultState = () => {
   return {
     token: getToken(),
+    tokenName: getTokenName(),
     name: '',
     avatar: ''
   }
@@ -18,6 +19,9 @@ const mutations = {
   },
   SET_TOKEN: (state, token) => {
     state.token = token
+  },
+  SET_TOKEN_NAME: (state, tokenName) => {
+    state.tokenName = tokenName
   },
   SET_NAME: (state, name) => {
     state.name = name
@@ -35,7 +39,11 @@ const actions = {
       login({ username: username.trim(), password: password }).then(response => {
         const { data } = response
         commit('SET_TOKEN', data.token)
+        commit('SET_TOKEN_NAME', data.tokenName)
         setToken(data.token)
+        setTokenName(data.tokenName)
+        // 输出token测试
+        console.log(data.token, data.tokenName)
         resolve()
       }).catch(error => {
         reject(error)
