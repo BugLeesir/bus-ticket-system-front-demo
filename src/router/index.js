@@ -48,13 +48,13 @@ export const asyncRoutes = [{
           path: 'menu1-1',
           component: () => import('@/views/nested/menu1/menu1-1'),
           name: 'Menu1-1',
-          meta: { title: 'Menu1-1' }
+          meta: { title: 'Menu1-1', roles: ['admin'] }
         },
         {
           path: 'menu1-2',
           component: () => import('@/views/nested/menu1/menu1-2'),
           name: 'Menu1-2',
-          meta: { title: 'Menu1-2' },
+          meta: { title: 'Menu1-2', roles: ['member'] },
           children: [
             {
               path: 'menu1-2-1',
