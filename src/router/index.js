@@ -35,7 +35,8 @@ export const asyncRoutes = [{
   name: 'Nested',
   meta: {
     title: 'Nested',
-    icon: 'nested'
+    icon: 'nested',
+    roles: ['admin', 'member'] // you can set roles in root nav
   },
   children: [
     {
@@ -48,13 +49,13 @@ export const asyncRoutes = [{
           path: 'menu1-1',
           component: () => import('@/views/nested/menu1/menu1-1'),
           name: 'Menu1-1',
-          meta: { title: 'Menu1-1', roles: ['admin'] }
+          meta: { title: 'Menu1-1' }
         },
         {
           path: 'menu1-2',
           component: () => import('@/views/nested/menu1/menu1-2'),
           name: 'Menu1-2',
-          meta: { title: 'Menu1-2', roles: ['member'] },
+          meta: { title: 'Menu1-2' },
           children: [
             {
               path: 'menu1-2-1',
@@ -82,7 +83,7 @@ export const asyncRoutes = [{
       path: 'menu2',
       component: () => import('@/views/nested/menu2/index'),
       name: 'Menu2',
-      meta: { title: 'menu2' }
+      meta: { title: 'menu2', roles: ['admin'] }
     }
   ]
 }]
