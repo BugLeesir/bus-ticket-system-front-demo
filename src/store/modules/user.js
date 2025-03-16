@@ -1,6 +1,7 @@
 import { login, logout, getInfo } from '@/api/user'
 import { getToken, setToken, removeToken, getTokenName, setTokenName } from '@/utils/auth'
 import { resetRouter } from '@/router'
+import { encryptPassword } from '@/utils/encrypt'
 
 const getDefaultState = () => {
   return {
@@ -40,7 +41,8 @@ const actions = {
   login({ commit }, userInfo) {
     const { username, password } = userInfo
     return new Promise((resolve, reject) => {
-      login({ username: username.trim(), password: password }).then(response => {
+      // 加密密码
+      login({ username: username.trim(), password: encryptPassword(password) }).then(response => {
         const { data } = response
         commit('SET_TOKEN', data.token)
         commit('SET_TOKEN_NAME', data.tokenName)
