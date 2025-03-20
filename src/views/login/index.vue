@@ -41,15 +41,38 @@
         </span>
       </el-form-item>
 
-      <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">Login</el-button>
+      <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">登录</el-button><br>
+      <el-button type="default" style="width:100%;margin-bottom:30px;" @click.native.prevent="showRegister">注册</el-button>
 
     </el-form>
+
+    <el-dialog title="注册" :visible.sync="showRegisterDialog">
+      <el-form ref="registerForm" :model="registerForm" :rules="registerRules" label-position="left" auto-complete="on">
+        <el-form-item label="用户名" prop="username">
+          <el-input v-model="registerForm.username" auto-complete="off" placeholder="请输入用户名" />
+        </el-form-item>
+        <el-form-item label="密码" prop="password">
+          <el-input v-model="registerForm.password" type="password" auto-complete="off" placeholder="请输入密码" />
+        </el-form-item>
+        <el-form-item label="邮箱" prop="email">
+          <el-input v-model="registerForm.email" auto-complete="off" placeholder="请输入邮箱" />
+        </el-form-item>
+        <el-form-item label="手机号" prop="phone">
+          <el-input v-model="registerForm.phone" auto-complete="off" placeholder="请输入手机号" />
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="showRegisterDialog = false">取消</el-button>
+        <el-button type="primary" @click="handleRegister">确认</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
 // import { validUsername } from '@/utils/validate'
-
+import { register } from '@/api/user'
+import { encryptPassword } from '@/utils/encrypt'
 export default {
   name: 'Login',
   data() {
@@ -62,7 +85,23 @@ export default {
     // }
     const validatePassword = (rule, value, callback) => {
       if (value.length < 6) {
-        callback(new Error('The password can not be less than 6 digits'))
+        callback(new Error('密码长度不能小于6位'))
+      } else {
+        callback()
+      }
+    }
+    const validateEmail = (rule, value, callback) => {
+      const emailPattern = /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/
+      if (!emailPattern.test(value)) {
+        callback(new Error('请输入正确的邮箱'))
+      } else {
+        callback()
+      }
+    }
+    const validatePhone = (rule, value, callback) => {
+      const phonePattern = /^[1][3,4,5,7,8][0-9]{9}$/
+      if (!phonePattern.test(value)) {
+        callback(new Error('请输入正确的手机号'))
       } else {
         callback()
       }
@@ -77,7 +116,20 @@ export default {
       },
       loading: false,
       passwordType: 'password',
-      redirect: undefined
+      redirect: undefined,
+      showRegisterDialog: false,
+      registerForm: {
+        username: '',
+        password: '',
+        email: '',
+        phone: ''
+      },
+      registerRules: {
+        username: [{ required: true, message: 'Please enter the username', trigger: 'blur' }],
+        password: [{ required: true, message: 'Please enter the password', trigger: 'blur' }, { validator: validatePassword, trigger: 'blur' }],
+        email: [{ required: true, message: 'Please enter the email', trigger: 'blur' }, { validator: validateEmail, trigger: 'blur' }],
+        phone: [{ required: true, message: 'Please enter the phone number', trigger: 'blur' }, { validator: validatePhone, trigger: 'blur' }]
+      }
     }
   },
   watch: {
@@ -86,6 +138,13 @@ export default {
         this.redirect = route.query && route.query.redirect
       },
       immediate: true
+    },
+    showRegisterDialog(val) {
+      if (!val) {
+        this.$nextTick(() => {
+          this.$refs.registerForm.resetFields()
+        })
+      }
     }
   },
   methods: {
@@ -110,7 +169,35 @@ export default {
             this.loading = false
           })
         } else {
-          console.log('error submit!!')
+          console.log('错误的表单')
+          return false
+        }
+      })
+    },
+    showRegister() {
+      this.showRegisterDialog = true
+    },
+    handleRegister() {
+      this.$refs.registerForm.validate(valid => {
+        if (valid) {
+          const data = {
+            username: '',
+            password: '',
+            email: '',
+            phone: ''
+          }
+          data.username = this.registerForm.username
+          data.email = this.registerForm.email
+          data.phone = this.registerForm.phone
+          data.password = encryptPassword(this.registerForm.password)
+          register(data).then(() => {
+            this.$message.success('注册成功')
+            this.showRegisterDialog = false
+          }).catch(res => {
+            this.$message.error('注册失败:' + res.msg)
+          })
+        } else {
+          console.log('错误的表单')
           return false
         }
       })
@@ -162,6 +249,12 @@ $cursor: #fff;
     background: rgba(0, 0, 0, 0.1);
     border-radius: 5px;
     color: #454545;
+  }
+  .el-dialog{
+    background-color: $bg;
+  }
+  .el-dialog__title{
+    color: white !important;
   }
 }
 </style>
