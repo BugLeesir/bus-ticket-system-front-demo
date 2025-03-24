@@ -87,6 +87,39 @@ export const asyncRoutes = [
         meta: { title: 'menu2', roles: ['admin'] }
       }
     ]
+  },
+  {
+    path: '/userManager',
+    component: Layout,
+    redirect: '/userManager/member',
+    name: 'userManager',
+    meta: {
+      title: '用户管理',
+      icon: 'userManager',
+      roles: ['admin'] // you can set roles in root nav
+    },
+    children: [
+      {
+        path: 'member',
+        component: () => import('@/views/userManager/member'), // Parent router-view
+        name: 'Member',
+        meta:
+        {
+          title: '会员信息管理',
+          icon: 'RiMemberLine'
+        }
+      },
+      {
+        path: 'admin',
+        component: () => import('@/views/userManager/admin'),
+        name: 'Admin',
+        meta:
+        {
+          title: '管理员信息管理',
+          icon: 'RiAdminFill'
+        }
+      }
+    ]
   }
 ]
 /**
@@ -128,17 +161,6 @@ export const constantRoutes = [
         name: 'Form',
         component: () => import('@/views/form/index'),
         meta: { title: 'Form', icon: 'form' }
-      }
-    ]
-  },
-
-  {
-    path: 'external-link',
-    component: Layout,
-    children: [
-      {
-        path: 'https://panjiachen.github.io/vue-element-admin-site/#/',
-        meta: { title: 'External Link', icon: 'link' }
       }
     ]
   },
