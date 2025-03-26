@@ -8,3 +8,12 @@ export function searchMember(data) {
     data
   })
 }
+
+// 添加会员
+export function addMember(data) {
+  return request({
+    url: '/member/add',
+    method: 'post',
+    data
+  })
+}

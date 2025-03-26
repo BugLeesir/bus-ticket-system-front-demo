@@ -26,6 +26,7 @@
           <el-dropdown-item @click.native="changeStateBottomType('0')">停用</el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
+      <el-button type="success" @click="openAddMemberDialog">添加会员</el-button>
     </el-row>
 
     <!-- 会员信息表格 -->
@@ -66,6 +67,34 @@
       </el-table-column>
     </el-table>
 
+    <!-- 添加会员表单 -->
+    <el-dialog title="添加会员" :visible.sync="addMemberDialogVisible" width="30%">
+      <el-form ref="addMemberForm" :model="newMember" :rules="rules" label-width="100px">
+        <el-form-item label="用户名" prop="username">
+          <el-input v-model="newMember.username" placeholder="请输入用户名" />
+        </el-form-item>
+        <el-form-item label="密码" prop="password">
+          <el-input v-model="newMember.password" type="password" placeholder="请输入密码" />
+        </el-form-item>
+        <el-form-item label="邮箱" prop="email">
+          <el-input v-model="newMember.email" placeholder="请输入邮箱" />
+        </el-form-item>
+        <el-form-item label="手机号" prop="phone">
+          <el-input v-model="newMember.phone" placeholder="请输入手机号" />
+        </el-form-item>
+        <el-form-item label="状态" prop="status">
+          <el-select v-model="newMember.status" placeholder="请选择状态">
+            <el-option label="启用" :value="1" />
+            <el-option label="停用" :value="0" />
+          </el-select>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="addMemberDialogVisible = false">取消</el-button>
+        <el-button type="primary" @click="submitAddMemberForm">确定</el-button>
+      </div>
+    </el-dialog>
+
     <!-- 分页 -->
     <el-pagination
       class="pagination"
@@ -81,9 +110,33 @@
 </template>
 
 <script>
-import { searchMember } from '@/api/member'
+import { searchMember, addMember } from '@/api/member'
+import { encryptPassword } from '@/utils/encrypt'
 export default {
   data() {
+    const validatePassword = (rule, value, callback) => {
+      if (value.length < 6) {
+        callback(new Error('密码长度不能小于6位'))
+      } else {
+        callback()
+      }
+    }
+    const validateEmail = (rule, value, callback) => {
+      const emailPattern = /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/
+      if (!emailPattern.test(value)) {
+        callback(new Error('请输入正确的邮箱'))
+      } else {
+        callback()
+      }
+    }
+    const validatePhone = (rule, value, callback) => {
+      const phonePattern = /^[1][3,4,5,7,8][0-9]{9}$/
+      if (!phonePattern.test(value)) {
+        callback(new Error('请输入正确的手机号'))
+      } else {
+        callback()
+      }
+    }
     return {
       searchModel: {
         username: '',
@@ -97,7 +150,22 @@ export default {
         { id: 2, username: '李四', email: 'lisi@example.com', phone: '13900000000', status: 0, registerTime: '2024-03-18' }
       ],
       selectedMembers: [],
-      stateType: ''
+      stateType: '',
+      addMemberDialogVisible: false,
+      newMember: {
+        username: '',
+        password: '',
+        email: '',
+        phone: '',
+        status: null
+      },
+      rules: {
+        username: [{ required: true, message: '请输入用户名', trigger: 'blur' }],
+        password: [{ required: true, message: '请输入密码', trigger: 'blur' }, { validator: validatePassword, trigger: 'blur' }],
+        email: [{ required: true, message: '请输入邮箱', trigger: 'blur' }, { validator: validateEmail, trigger: 'blur' }],
+        phone: [{ required: true, message: '请输入手机号', trigger: 'blur' }, { validator: validatePhone, trigger: 'blur' }],
+        status: [{ required: true, message: '请选择状态', trigger: 'change' }]
+      }
     }
   },
   mounted: function() {
@@ -127,6 +195,7 @@ export default {
     },
     handleSelectionChange(selected) {
       this.selectedMembers = selected
+      console.log('选中的会员', selected)
     },
     editMember(member) {
       console.log('修改会员信息', member)
@@ -154,6 +223,50 @@ export default {
     },
     changeStateBottomType(state) {
       this.stateType = state
+    },
+    openAddMemberDialog() {
+      this.addMemberDialogVisible = true
+      this.newMember = {
+        username: '',
+        password: '',
+        email: '',
+        phone: '',
+        status: null
+      }
+    },
+    submitAddMemberForm() {
+      this.$refs.addMemberForm.validate(valid => {
+        if (valid) {
+          const data = {
+            username: '',
+            password: '',
+            email: '',
+            phone: '',
+            status: ''
+          }
+          data.username = this.newMember.username
+          data.email = this.newMember.email
+          data.phone = this.newMember.phone
+          data.password = encryptPassword(this.newMember.password)
+          data.status = this.newMember.status
+          addMember(data)
+            .then(response => {
+              if (response.code === 200) {
+                this.$message.success('会员添加成功')
+                this.addMemberDialogVisible = false
+                this.searchMembers() // 重新加载会员列表
+              } else {
+                this.$message.error(response.msg || '添加失败')
+              }
+            })
+            .catch(error => {
+              console.error('添加会员失败:', error)
+              this.$message.error('添加会员失败，请稍后重试')
+            })
+        } else {
+          console.error('表单校验失败')
+        }
+      })
     }
   }
 }
