@@ -19,7 +19,7 @@
     <!-- 操作按钮 -->
     <el-row style="margin-top: 20px;">
       <el-button type="danger" @click="batchDelete">删除</el-button>
-      <el-dropdown split-button type="primary" style="margin-left: 10px; margin-right: 10px;" @click="setState">
+      <el-dropdown split-button type="primary" style="margin-left: 10px; margin-right: 10px;" @click="batchChangeStatus">
         {{ stateType === '1' ? '启用' : '停用' }}
         <el-dropdown-menu slot="dropdown">
           <el-dropdown-item @click.native="changeStateBottomType('1')">启用</el-dropdown-item>
@@ -58,7 +58,7 @@
         header-align="center"
       >
         <template v-slot="scope">
-          <el-button type="primary" @click="editMember(scope.row)">修改</el-button>
+          <el-button type="primary" @click="openEditMemberDialog(scope.row)">修改</el-button>
           <el-button type="danger" @click="deleteMember(scope.row.id)">删除</el-button>
           <el-button type="warning" @click="toggleStatus(scope.row)">
             {{ scope.row.status ? '禁用' : '启用' }}
@@ -94,7 +94,39 @@
         <el-button type="primary" @click="submitAddMemberForm">确定</el-button>
       </div>
     </el-dialog>
-
+    <!-- 修改会员信息表单 -->
+    <el-dialog title="修改会员" :visible.sync="editMemberDialogVisible" width="30%">
+      <el-form ref="editMemberForm" :model="editMember" :rules="rules" label-width="100px">
+        <el-form-item label="用户名" prop="username">
+          <el-input v-model="editMember.username" placeholder="请输入用户名" />
+        </el-form-item>
+        <el-form-item label="邮箱" prop="email">
+          <el-input v-model="editMember.email" placeholder="请输入邮箱" />
+        </el-form-item>
+        <el-form-item label="手机号" prop="phone">
+          <el-input v-model="editMember.phone" placeholder="请输入手机号" />
+        </el-form-item>
+        <el-form-item label="状态" prop="status">
+          <el-select v-model="editMember.status" placeholder="请选择状态">
+            <el-option label="启用" :value="1" />
+            <el-option label="停用" :value="0" />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="密码" prop="password">
+          <el-input
+            v-model="editMember.password"
+            type="password"
+            placeholder="******"
+            :disabled="!isEditingPassword"
+          />
+          <el-checkbox v-model="isEditingPassword" @change="toggleEditPassword">修改密码</el-checkbox>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="editMemberDialogVisible = false">取消</el-button>
+        <el-button type="primary" @click="submitEditMemberForm">确定</el-button>
+      </div>
+    </el-dialog>
     <!-- 分页 -->
     <el-pagination
       class="pagination"
@@ -111,6 +143,7 @@
 
 <script>
 import { searchMember, addMember } from '@/api/member'
+import { updateInfo, deleteUser, setUserStatus, deleteUsers, setUsersStatus } from '@/api/user'
 import { encryptPassword } from '@/utils/encrypt'
 export default {
   data() {
@@ -150,7 +183,7 @@ export default {
         { id: 2, username: '李四', email: 'lisi@example.com', phone: '13900000000', status: 0, registerTime: '2024-03-18' }
       ],
       selectedMembers: [],
-      stateType: '',
+      stateType: '1',
       addMemberDialogVisible: false,
       newMember: {
         username: '',
@@ -165,7 +198,17 @@ export default {
         email: [{ required: true, message: '请输入邮箱', trigger: 'blur' }, { validator: validateEmail, trigger: 'blur' }],
         phone: [{ required: true, message: '请输入手机号', trigger: 'blur' }, { validator: validatePhone, trigger: 'blur' }],
         status: [{ required: true, message: '请选择状态', trigger: 'change' }]
-      }
+      },
+      editMemberDialogVisible: false,
+      editMember: {
+        id: '',
+        username: '',
+        email: '',
+        phone: '',
+        status: null,
+        password: '******' // 默认显示不可修改的密码
+      },
+      isEditingPassword: false // 是否允许修改密码
     }
   },
   mounted: function() {
@@ -197,21 +240,112 @@ export default {
       this.selectedMembers = selected
       console.log('选中的会员', selected)
     },
-    editMember(member) {
-      console.log('修改会员信息', member)
-    },
     deleteMember(id) {
-      console.log('删除会员', id)
+      this.$confirm('此操作将永久删除该会员, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        deleteUser(id)
+          .then(response => {
+            if (response.code === 200) {
+              this.$message.success('删除成功')
+              this.searchMembers() // 重新加载会员列表
+            } else {
+              this.$message.error(response.msg || '删除失败')
+            }
+          })
+          .catch(error => {
+            console.error('删除会员失败:', error)
+            this.$message.error('删除会员失败，请稍后重试')
+          })
+      }).catch(() => {
+        this.$message.info('已取消删除')
+      })
     },
     toggleStatus(member) {
-      member.status = member.status ? 0 : 1
-      console.log('修改用户状态', member)
+      const newStatus = member.status ? 0 : 1
+      const action = newStatus === 1 ? '启用' : '禁用'
+      this.$confirm(`此操作将${action}该会员, 是否继续?`, '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        setUserStatus(member.id, newStatus)
+          .then(response => {
+            if (response.code === 200) {
+              this.$message.success(`${action}成功`)
+              member.status = newStatus // 更新本地状态
+            } else {
+              this.$message.error(response.msg || `${action}失败`)
+            }
+          })
+          .catch(error => {
+            console.error(`${action}会员失败:`, error)
+            this.$message.error(`${action}会员失败，请稍后重试`)
+          })
+      }).catch(() => {
+        this.$message.info('已取消操作')
+      })
     },
     batchDelete() {
-      console.log('批量删除', this.selectedMembers)
+      if (this.selectedMembers.length === 0) {
+        this.$message.warning('请先选择要删除的会员')
+        return
+      }
+
+      this.$confirm('此操作将永久删除选中的会员, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        const ids = this.selectedMembers.map(member => member.id)
+        deleteUsers({ ids })
+          .then(response => {
+            if (response.code === 200) {
+              this.$message.success('批量删除成功')
+              this.searchMembers() // 重新加载会员列表
+            } else {
+              this.$message.error(response.msg || '批量删除失败')
+            }
+          })
+          .catch(error => {
+            console.error('批量删除失败:', error)
+            this.$message.error('批量删除失败，请稍后重试')
+          })
+      }).catch(() => {
+        this.$message.info('已取消删除')
+      })
     },
-    batchEnable() {
-      console.log('批量启用', this.selectedMembers)
+    batchChangeStatus() {
+      if (this.selectedMembers.length === 0) {
+        this.$message.warning('请先选择要设置状态的会员')
+        return
+      }
+
+      const action = this.stateType === '1' ? '启用' : '停用'
+      this.$confirm(`此操作将${action}选中的会员, 是否继续?`, '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        const ids = this.selectedMembers.map(member => member.id)
+        setUsersStatus({ ids, status: this.stateType })
+          .then(response => {
+            if (response.code === 200) {
+              this.$message.success(`批量${action}成功`)
+              this.searchMembers() // 重新加载会员列表
+            } else {
+              this.$message.error(response.msg || `批量${action}失败`)
+            }
+          })
+          .catch(error => {
+            console.error(`批量${action}失败:`, error)
+            this.$message.error(`批量${action}失败，请稍后重试`)
+          })
+      }).catch(() => {
+        this.$message.info('已取消操作')
+      })
     },
     handlePageChange(newPage) {
       this.searchModel.pageNum = newPage
@@ -262,6 +396,57 @@ export default {
             .catch(error => {
               console.error('添加会员失败:', error)
               this.$message.error('添加会员失败，请稍后重试')
+            })
+        } else {
+          console.error('表单校验失败')
+        }
+      })
+    },
+    openEditMemberDialog(member) {
+      this.editMemberDialogVisible = true
+      this.editMember = {
+        id: member.id,
+        username: member.username,
+        email: member.email,
+        phone: member.phone,
+        status: member.status,
+        password: '******' // 默认显示不可修改的密码
+      }
+      this.isEditingPassword = false // 默认不允许修改密码
+    },
+    toggleEditPassword() {
+      if (this.isEditingPassword) {
+        this.editMember.password = '' // 清空密码输入框
+      } else {
+        this.editMember.password = '******' // 恢复为不可修改状态
+      }
+    },
+    submitEditMemberForm() {
+      this.$refs.editMemberForm.validate(valid => {
+        if (valid) {
+          const data = {
+            id: this.editMember.id,
+            username: this.editMember.username,
+            email: this.editMember.email,
+            phone: this.editMember.phone,
+            status: this.editMember.status,
+            password: this.isEditingPassword
+              ? encryptPassword(this.editMember.password) // 如果修改密码，则加密后提交
+              : null // 如果不修改密码，则不提交密码
+          }
+          updateInfo(data)
+            .then(response => {
+              if (response.code === 200) {
+                this.$message.success('会员修改成功')
+                this.editMemberDialogVisible = false
+                this.searchMembers() // 重新加载会员列表
+              } else {
+                this.$message.error(response.msg || '修改失败')
+              }
+            })
+            .catch(error => {
+              console.error('修改会员失败:', error)
+              this.$message.error('修改会员失败，请稍后重试')
             })
         } else {
           console.error('表单校验失败')

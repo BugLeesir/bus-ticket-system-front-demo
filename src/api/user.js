@@ -35,3 +35,47 @@ export function register(data) {
   })
 }
 
+// 修改用户信息
+export function updateInfo(data) {
+  return request({
+    url: '/user/update',
+    method: 'put',
+    data
+  })
+}
+
+// 删除用户
+export function deleteUser(id) {
+  return request({
+    url: '/user/delete',
+    method: 'delete',
+    params: { id }
+  })
+}
+
+// 批量删除用户
+export function deleteUsers(data) {
+  return request({
+    url: '/user/batchDelete',
+    method: 'delete',
+    data
+  })
+}
+
+// 设置用户状态
+export function setUserStatus(id, status) {
+  return request({
+    url: '/user/status',
+    method: 'put',
+    params: { id, status }
+  })
+}
+
+// 批量设置用户状态
+export function setUsersStatus(data) {
+  return request({
+    url: '/user/batchSetStatus',
+    method: 'put',
+    data
+  })
+}
