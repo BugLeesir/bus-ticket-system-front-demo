@@ -42,14 +42,14 @@ const actions = {
     const { username, password } = userInfo
     return new Promise((resolve, reject) => {
       // 加密密码
-      login({ username: username.trim(), password: encryptPassword(password) }).then(response => {
-        const { data } = response
-        commit('SET_TOKEN', data.token)
-        commit('SET_TOKEN_NAME', data.tokenName)
-        setToken(data.token)
-        setTokenName(data.tokenName)
+      login({ username: username.trim(), password: encryptPassword(password) }).then(res => {
+        console.log(res)
+        commit('SET_TOKEN', res.data.token)
+        commit('SET_TOKEN_NAME', res.data.tokenName)
+        setToken(res.data.token)
+        setTokenName(res.data.tokenName)
         // 输出token测试
-        console.log(data.token, data.tokenName)
+        console.log(res.data.token, res.data.tokenName)
         resolve()
       }).catch(error => {
         reject(error)
