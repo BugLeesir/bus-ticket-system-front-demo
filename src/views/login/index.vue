@@ -125,10 +125,10 @@ export default {
         phone: ''
       },
       registerRules: {
-        username: [{ required: true, message: 'Please enter the username', trigger: 'blur' }],
-        password: [{ required: true, message: 'Please enter the password', trigger: 'blur' }, { validator: validatePassword, trigger: 'blur' }],
-        email: [{ required: true, message: 'Please enter the email', trigger: 'blur' }, { validator: validateEmail, trigger: 'blur' }],
-        phone: [{ required: true, message: 'Please enter the phone number', trigger: 'blur' }, { validator: validatePhone, trigger: 'blur' }]
+        username: [{ required: true, message: '请输入用户名', trigger: 'blur' }],
+        password: [{ required: true, message: '请输入密码', trigger: 'blur' }, { validator: validatePassword, trigger: 'blur' }],
+        email: [{ required: true, message: '请输入邮箱', trigger: 'blur' }, { validator: validateEmail, trigger: 'blur' }],
+        phone: [{ required: true, message: '请输入手机号', trigger: 'blur' }, { validator: validatePhone, trigger: 'blur' }]
       }
     }
   },
