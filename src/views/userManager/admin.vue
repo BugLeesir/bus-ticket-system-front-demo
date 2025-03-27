@@ -29,7 +29,7 @@
       <el-button type="success" @click="openAddAdminDialog">添加管理员</el-button>
     </el-row>
 
-    <!-- 会员信息表格 -->
+    <!-- 管理员信息表格 -->
     <el-table :data="admins" style="width: 100%; margin-top: 20px;" border @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" />
       <el-table-column
@@ -67,8 +67,8 @@
       </el-table-column>
     </el-table>
 
-    <!-- 添加会员表单 -->
-    <el-dialog title="添加会员" :visible.sync="addAdminDialogVisible" width="30%">
+    <!-- 添加管理员表单 -->
+    <el-dialog title="添加管理员" :visible.sync="addAdminDialogVisible" width="30%">
       <el-form ref="addAdminForm" :model="newAdmin" :rules="rules" label-width="100px">
         <el-form-item label="用户名" prop="username">
           <el-input v-model="newAdmin.username" placeholder="请输入用户名" />
@@ -94,8 +94,8 @@
         <el-button type="primary" @click="submitAddAdminForm">确定</el-button>
       </div>
     </el-dialog>
-    <!-- 修改会员信息表单 -->
-    <el-dialog title="修改会员" :visible.sync="editAdminDialogVisible" width="30%">
+    <!-- 修改管理员信息表单 -->
+    <el-dialog title="修改管理员" :visible.sync="editAdminDialogVisible" width="30%">
       <el-form ref="editAdminForm" :model="editAdmin" :rules="rules" label-width="100px">
         <el-form-item label="用户名" prop="username">
           <el-input v-model="editAdmin.username" placeholder="请输入用户名" />
@@ -245,7 +245,7 @@ export default {
     },
     handleSelectionChange(selected) {
       this.selectedAdmins = selected
-      console.log('选中的会员', selected)
+      console.log('选中的管理员', selected)
     },
     deleteAdmin(id) {
       const currentUsername = this.$store.state.user.name // 获取当前登录管理员的用户名
@@ -430,16 +430,16 @@ export default {
           addAdmin(data)
             .then(response => {
               if (response.code === 200) {
-                this.$message.success('会员添加成功')
+                this.$message.success('管理员添加成功')
                 this.addAdminDialogVisible = false
-                this.searchAdmins() // 重新加载会员列表
+                this.searchAdmins() // 重新加载管理员列表
               } else {
                 this.$message.error(response.msg || '添加失败')
               }
             })
             .catch(error => {
-              console.error('添加会员失败:', error)
-              this.$message.error('添加会员失败，请稍后重试')
+              console.error('添加管理员失败:', error)
+              this.$message.error('添加管理员失败，请稍后重试')
             })
         } else {
           console.error('表单校验失败')
@@ -488,16 +488,16 @@ export default {
           updateInfo(data)
             .then(response => {
               if (response.code === 200) {
-                this.$message.success('会员修改成功')
+                this.$message.success('管理员修改成功')
                 this.editAdminDialogVisible = false
-                this.searchAdmins() // 重新加载会员列表
+                this.searchAdmins() // 重新加载管理员列表
               } else {
                 this.$message.error(response.msg || '修改失败')
               }
             })
             .catch(error => {
-              console.error('修改会员失败:', error)
-              this.$message.error('修改会员失败，请稍后重试')
+              console.error('修改管理员失败:', error)
+              this.$message.error('修改管理员失败，请稍后重试')
             })
         } else {
           console.error('表单校验失败')
