@@ -218,23 +218,30 @@ export default {
     searchMembers() {
       // 清空会员列表
       this.members = []
-      // 转换日期为本地时间
-      if (this.searchModel.registerTime.length === 2) {
+
+      // 检查日期范围是否存在
+      if (this.searchModel.registerTime && this.searchModel.registerTime.length === 2) {
         this.searchModel.registerTime = this.searchModel.registerTime.map(date => {
           const localDate = new Date(date)
           localDate.setMinutes(localDate.getMinutes() - localDate.getTimezoneOffset())
           return localDate.toISOString().split('T')[0]
         })
+      } else {
+        // 如果日期为空，则重置为一个空数组
+        this.searchModel.registerTime = []
       }
+
       // 执行搜索
-      return searchMember(this.searchModel).then(res => {
-        this.members = res.data.list
-        this.total = res.data.total
-      }).catch(() => {
-        this.members = []
-        this.total = 0
-        console.error('查询会员列表失败')
-      })
+      return searchMember(this.searchModel)
+        .then(res => {
+          this.members = res.data.list
+          this.total = res.data.total
+        })
+        .catch(() => {
+          this.members = []
+          this.total = 0
+          console.error('查询会员列表失败')
+        })
     },
     handleSelectionChange(selected) {
       this.selectedMembers = selected
