@@ -66,7 +66,7 @@ const actions = {
         }
         // const { username, avatar, roles } = data
         const username = res.data.username
-        const avatar = res.data.avatar
+        const avatar = require('@/assets/avatar/avatar.png')
         const roles = res.data.roles
         const data = res.data
         // roles must be a non-empty array
