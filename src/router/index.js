@@ -133,6 +133,19 @@ export const asyncRoutes = [
         meta: { title: '车次信息管理', icon: 'UilBusAlt', roles: ['admin'] }
       }
     ]
+  },
+  {
+    path: '/announcement',
+    component: Layout,
+    redirect: '/announcement',
+    children: [
+      {
+        path: 'index',
+        name: 'announcement',
+        component: () => import('@/views/announcement/index'),
+        meta: { title: '公告信息管理', icon: 'announcement', roles: ['admin'] }
+      }
+    ]
   }
 ]
 /**
