@@ -146,7 +146,9 @@ export const asyncRoutes = [
         meta: { title: '公告信息管理', icon: 'announcement', roles: ['admin'] }
       }
     ]
-  }
+  },
+  // 404 page must be placed at the end !!!
+  { path: '*', redirect: '/404', hidden: true }
 ]
 /**
  * constantRoutes
@@ -189,10 +191,7 @@ export const constantRoutes = [
         meta: { title: 'Form', icon: 'form' }
       }
     ]
-  },
-
-  // 404 page must be placed at the end !!!
-  { path: '*', redirect: '/404', hidden: true }
+  }
 ]
 
 const createRouter = () => new Router({
