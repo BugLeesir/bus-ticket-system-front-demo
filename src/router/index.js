@@ -120,6 +120,19 @@ export const asyncRoutes = [
         }
       }
     ]
+  },
+  {
+    path: '/bus-route',
+    component: Layout,
+    redirect: '/bus-route',
+    children: [
+      {
+        path: 'index',
+        name: 'bus-route',
+        component: () => import('@/views/bus-route/index'),
+        meta: { title: '车次信息管理', icon: 'UilBusAlt', roles: ['admin'] }
+      }
+    ]
   }
 ]
 /**
