@@ -30,93 +30,34 @@ import Layout from '@/layout'
  */
 export const asyncRoutes = [
   {
-    path: '/nested',
+    path: '/user-manage',
     component: Layout,
-    redirect: '/nested/menu1',
-    name: 'Nested',
-    meta: {
-      title: 'Nested',
-      icon: 'nested',
-      roles: ['admin', 'member'] // you can set roles in root nav
-    },
-    children: [
-      {
-        path: 'menu1',
-        component: () => import('@/views/nested/menu1/index'), // Parent router-view
-        name: 'Menu1',
-        meta: { title: 'Menu1' },
-        children: [
-          {
-            path: 'menu1-1',
-            component: () => import('@/views/nested/menu1/menu1-1'),
-            name: 'Menu1-1',
-            meta: { title: 'Menu1-1' }
-          },
-          {
-            path: 'menu1-2',
-            component: () => import('@/views/nested/menu1/menu1-2'),
-            name: 'Menu1-2',
-            meta: { title: 'Menu1-2' },
-            children: [
-              {
-                path: 'menu1-2-1',
-                component: () => import('@/views/nested/menu1/menu1-2/menu1-2-1'),
-                name: 'Menu1-2-1',
-                meta: { title: 'Menu1-2-1' }
-              },
-              {
-                path: 'menu1-2-2',
-                component: () => import('@/views/nested/menu1/menu1-2/menu1-2-2'),
-                name: 'Menu1-2-2',
-                meta: { title: 'Menu1-2-2' }
-              }
-            ]
-          },
-          {
-            path: 'menu1-3',
-            component: () => import('@/views/nested/menu1/menu1-3'),
-            name: 'Menu1-3',
-            meta: { title: 'Menu1-3' }
-          }
-        ]
-      },
-      {
-        path: 'menu2',
-        component: () => import('@/views/nested/menu2/index'),
-        name: 'Menu2',
-        meta: { title: 'menu2', roles: ['admin'] }
-      }
-    ]
-  },
-  {
-    path: '/userManager',
-    component: Layout,
-    redirect: '/userManager/member',
-    name: 'userManager',
+    redirect: '/user-manage/member',
+    name: 'user-manage',
     meta: {
       title: '用户管理',
-      icon: 'userManager',
+      icon: 'user-manage',
       roles: ['admin'] // you can set roles in root nav
     },
     children: [
       {
         path: 'member',
-        component: () => import('@/views/userManager/member'), // Parent router-view
+        component: () => import('@/views/user-manage/member'), // Parent router-view
         name: 'Member',
         meta:
         {
           title: '会员信息管理',
-          icon: 'RiMemberLine'
+          icon: 'member'
         }
       },
       {
         path: 'admin',
-        component: () => import('@/views/userManager/admin'),
+        component: () => import('@/views/user-manage/admin'),
         name: 'Admin',
         meta:
         {
           title: '管理员信息管理',
-          icon: 'RiAdminFill'
+          icon: 'admin'
         }
       }
     ]
@@ -130,7 +71,7 @@ export const asyncRoutes = [
         path: 'index',
         name: 'bus-route',
         component: () => import('@/views/bus-route/index'),
-        meta: { title: '车次信息管理', icon: 'UilBusAlt', roles: ['admin'] }
+        meta: { title: '车次信息管理', icon: 'bus-route', roles: ['admin'] }
       }
     ]
   },
@@ -144,6 +85,19 @@ export const asyncRoutes = [
         name: 'announcement',
         component: () => import('@/views/announcement/index'),
         meta: { title: '公告信息管理', icon: 'announcement', roles: ['admin'] }
+      }
+    ]
+  },
+  {
+    path: '/message',
+    component: Layout,
+    redirect: '/message',
+    children: [
+      {
+        path: 'index',
+        name: 'message',
+        component: () => import('@/views/message/index'),
+        meta: { title: '留言区', icon: 'message', roles: ['admin', 'member'] }
       }
     ]
   },
@@ -178,19 +132,6 @@ export const constantRoutes = [
       component: () => import('@/views/dashboard/index'),
       meta: { title: '首页', icon: 'dashboard' }
     }]
-  },
-
-  {
-    path: '/form',
-    component: Layout,
-    children: [
-      {
-        path: 'index',
-        name: 'Form',
-        component: () => import('@/views/form/index'),
-        meta: { title: 'Form', icon: 'form' }
-      }
-    ]
   }
 ]
 
