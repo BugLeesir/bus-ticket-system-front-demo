@@ -28,6 +28,9 @@ const mutations = {
   SET_NAME: (state, name) => {
     state.name = name
   },
+  SET_USER_ID: (state, userId) => {
+    state.userId = userId
+  },
   SET_AVATAR: (state, avatar) => {
     state.avatar = avatar
   },
@@ -48,8 +51,6 @@ const actions = {
         commit('SET_TOKEN_NAME', res.data.tokenName)
         setToken(res.data.token)
         setTokenName(res.data.tokenName)
-        // 输出token测试
-        console.log(res.data.token, res.data.tokenName)
         resolve()
       }).catch(error => {
         reject(error)
@@ -68,6 +69,7 @@ const actions = {
         const username = res.data.username
         const avatar = require('@/assets/avatar/avatar.png')
         const roles = res.data.roles
+        const userId = res.data.userId
         const data = res.data
         // roles must be a non-empty array
         if (!roles || roles.length <= 0) {
@@ -77,6 +79,7 @@ const actions = {
         commit('SET_NAME', username)
         commit('SET_AVATAR', avatar)
         commit('SET_ROLES', roles)
+        commit('SET_USER_ID', userId)
         resolve(data)
       }).catch(error => {
         reject(error)
