@@ -132,6 +132,38 @@ export const constantRoutes = [
       component: () => import('@/views/homepage/index'),
       meta: { title: '首页', icon: 'homepage' }
     }]
+  },
+  {
+    path: '/personal-center',
+    component: Layout,
+    redirect: '/personal-center/personal-info',
+    name: 'personal-center',
+    meta: {
+      title: '个人中心',
+      icon: 'personal-center'
+    },
+    children: [
+      {
+        path: 'personal-info',
+        component: () => import('@/views/personal-center/personal-info'), // Parent router-view
+        name: 'personal-info',
+        meta:
+        {
+          title: '个人信息',
+          icon: 'personal-info'
+        }
+      },
+      {
+        path: 'my-orders',
+        component: () => import('@/views/personal-center/my-orders'),
+        name: 'my-orders',
+        meta:
+        {
+          title: '我的订单',
+          icon: 'my-orders'
+        }
+      }
+    ]
   }
 ]
 
