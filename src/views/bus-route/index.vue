@@ -1,87 +1,87 @@
 <template>
-  <div style="margin-top: 20px; padding-left: 20px;">
+  <div class="bus-route-container">
     <!-- 搜索栏 -->
-    <el-row :gutter="20">
-      <el-col :xs="24" :sm="12" :md="4">
-        <el-cascader
-          v-model="searchModel.departure"
-          :options="locations"
-          placeholder="请选择出发地"
-          clearable
-        />
-      </el-col>
-      <el-col :xs="24" :sm="12" :md="4">
-        <el-cascader
-          v-model="searchModel.destination"
-          :options="locations"
-          placeholder="请选择目的地"
-          clearable
-        />
-      </el-col>
-      <el-col :xs="24" :sm="12" :md="4">
-        <el-input v-model="searchModel.routeName" placeholder="车次名称" />
-      </el-col>
-      <el-col :xs="24" :sm="24" :md="7">
-        <el-date-picker
-          v-model="searchModel.departureTime"
-          type="datetime"
-          placeholder="出发时间"
-          style="width: 45%; margin-right: 10px;"
-        />
-        <el-date-picker
-          v-model="searchModel.arrivalTime"
-          type="datetime"
-          placeholder="到达时间"
-          style="width: 45%;"
-        />
-      </el-col>
-      <el-col :xs="24" :sm="12" :md="4">
-        <el-select v-model="searchModel.priceRange" placeholder="票价">
-          <el-option label="任意金额" value="any" />
-          <el-option label="50以下" value="below50" />
-          <el-option label="50~100" value="50to100" />
-          <el-option label="100以上" value="above100" />
-        </el-select>
-      </el-col>
-    </el-row>
-
-    <!-- 操作按钮 -->
-    <el-row style="margin-top: 20px;">
-      <el-button type="danger" @click="batchDelete">批量删除</el-button>
-      <el-button type="success" @click="openAddBusRouteDialog">添加车次</el-button>
-      <el-button type="primary" icon="el-icon-search" style="margin-left: 10px;" @click="searchBusRoutes">
-        查询
-      </el-button>
-    </el-row>
+    <el-card class="search-bar">
+      <el-row :gutter="20">
+        <el-col :xs="24" :sm="12" :md="4">
+          <el-cascader
+            v-model="searchModel.departure"
+            :options="locations"
+            placeholder="请选择出发地"
+            clearable
+          />
+        </el-col>
+        <el-col :xs="24" :sm="12" :md="4">
+          <el-cascader
+            v-model="searchModel.destination"
+            :options="locations"
+            placeholder="请选择目的地"
+            clearable
+          />
+        </el-col>
+        <el-col :xs="24" :sm="12" :md="4">
+          <el-input v-model="searchModel.routeName" placeholder="车次名称" />
+        </el-col>
+        <el-col :xs="24" :sm="24" :md="7">
+          <el-date-picker
+            v-model="searchModel.departureTime"
+            type="datetime"
+            placeholder="出发时间"
+            style="width: 45%; margin-right: 10px;"
+          />
+          <el-date-picker
+            v-model="searchModel.arrivalTime"
+            type="datetime"
+            placeholder="到达时间"
+            style="width: 45%;"
+          />
+        </el-col>
+        <el-col :xs="24" :sm="12" :md="4">
+          <el-select v-model="searchModel.priceRange" placeholder="票价">
+            <el-option label="任意金额" value="any" />
+            <el-option label="50以下" value="below50" />
+            <el-option label="50~100" value="50to100" />
+            <el-option label="100以上" value="above100" />
+          </el-select>
+        </el-col>
+      </el-row>
+      <el-row class="action-bar">
+        <el-button type="primary" icon="el-icon-search" @click="searchBusRoutes">查询</el-button>
+        <el-button type="danger" @click="batchDelete">批量删除</el-button>
+        <el-button type="success" @click="openAddBusRouteDialog">添加车次</el-button>
+      </el-row>
+    </el-card>
 
     <!-- 车次信息表格 -->
-    <el-table
-      :data="busRoutes"
-      style="width: 100%; margin-top: 20px;"
-      border
-      @selection-change="handleSelectionChange"
-    >
-      <el-table-column type="selection" width="55" />
-      <el-table-column label="序号" width="120px">
-        <template slot-scope="scope">
-          {{ scope.$index + 1 }}
-        </template>
-      </el-table-column>
-      <el-table-column prop="routeName" label="车次名称" width="160px" />
-      <el-table-column prop="departure" label="出发地" width="150px" />
-      <el-table-column prop="destination" label="目的地" width="150px" />
-      <el-table-column prop="departureTime" label="出发时间" width="200px" />
-      <el-table-column prop="arrivalTime" label="到达时间" width="200px" />
-      <el-table-column prop="price" label="票价（单位：元）" width="150px" />
-      <el-table-column prop="seatsTotal" label="总座位数" width="100px" />
-      <el-table-column prop="seatsAvailable" label="可用座位数" width="100px" />
-      <el-table-column label="操作" width="300px" align="center" header-align="center">
-        <template slot-scope="scope">
-          <el-button type="primary" @click="openEditBusRouteDialog(scope.row)">修改</el-button>
-          <el-button type="danger" @click="deleteBusRoute(scope.row.routeId)">删除</el-button>
-        </template>
-      </el-table-column>
-    </el-table>
+    <el-card class="bus-route-table">
+      <el-table
+        :data="busRoutes"
+        style="width: 100%;"
+        border
+        @selection-change="handleSelectionChange"
+      >
+        <el-table-column type="selection" width="55" />
+        <el-table-column label="序号" width="60px">
+          <template slot-scope="scope">
+            {{ scope.$index + 1 }}
+          </template>
+        </el-table-column>
+        <el-table-column prop="routeName" label="车次名称" width="160px" />
+        <el-table-column prop="departure" label="出发地" width="150px" />
+        <el-table-column prop="destination" label="目的地" width="150px" />
+        <el-table-column prop="departureTime" label="出发时间" width="180px" />
+        <el-table-column prop="arrivalTime" label="到达时间" width="180px" />
+        <el-table-column prop="price" label="票价（单位：元）" width="140px" />
+        <el-table-column prop="seatsTotal" label="总座位数" width="100px" />
+        <el-table-column prop="seatsAvailable" label="可用座位数" width="100px" />
+        <el-table-column label="操作" width="270px" align="center" header-align="center">
+          <template slot-scope="scope">
+            <el-button type="primary" @click="openEditBusRouteDialog(scope.row)">修改</el-button>
+            <el-button type="danger" @click="deleteBusRoute(scope.row.routeId)">删除</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+    </el-card>
 
     <!-- 添加车次表单 -->
     <el-dialog title="添加车次" :visible.sync="addBusRouteDialogVisible" width="30%">
@@ -516,8 +516,45 @@ export default {
 </script>
 
 <style scoped>
+.bus-route-container {
+  margin: 20px;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+}
+
+.search-bar {
+  margin-bottom: 20px;
+  padding: 20px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.1);
+}
+
+.action-bar {
+  margin-top: 20px;
+  display: flex;
+  gap: 10px;
+}
+
+.bus-route-table {
+  margin-top: 20px;
+  padding: 20px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.1);
+}
+
 .pagination {
   display: flex;
   justify-content: center;
+  margin-top: 20px;
+}
+
+.dialog-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
 }
 </style>

@@ -27,7 +27,7 @@
     </el-card>
 
     <!-- 修改个人资料弹窗 -->
-    <el-dialog title="修改个人资料" :visible.sync="editDialogVisible" width="40%">
+    <el-dialog title="修改个人资料" :visible.sync="editDialogVisible" width="40%" class="edit-dialog">
       <el-form ref="editForm" :model="editUserInfo" :rules="rules" label-width="100px">
         <el-form-item label="用户名" prop="username">
           <el-input v-model="editUserInfo.username" placeholder="请输入用户名" />
@@ -200,20 +200,25 @@ export default {
   padding: 20px;
   background-color: #f5f7fa;
   min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .box-card {
+  width: 100%;
   max-width: 600px;
-  margin: 0 auto;
   background-color: #ffffff;
-  border-radius: 8px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  padding: 20px;
 }
 
 .card-title {
-  font-size: 18px;
+  font-size: 20px;
   font-weight: bold;
   color: #333;
+  text-align: center;
 }
 
 .personal-info-form {
@@ -221,29 +226,46 @@ export default {
 }
 
 .info-text {
-  font-size: 14px;
+  font-size: 16px;
   color: #606266;
 }
 
 .action-buttons {
   text-align: center;
   margin-top: 20px;
+
+  .el-button {
+    width: 150px;
+    height: 40px;
+    font-size: 16px;
+    border-radius: 8px;
+  }
 }
 
-.el-dialog {
-  border-radius: 8px;
-}
+.edit-dialog {
+  .el-dialog__title {
+    font-size: 18px;
+    font-weight: bold;
+    color: #333;
+  }
 
-.dialog-footer {
-  text-align: right;
-}
+  .el-form-item {
+    margin-bottom: 20px;
+  }
 
-.el-button {
-  border-radius: 4px;
+  .dialog-footer {
+    text-align: right;
+
+    .el-button {
+      border-radius: 8px;
+    }
+  }
 }
 
 .el-input {
   width: 100%;
+  height: 40px;
+  font-size: 14px;
 }
 
 .el-checkbox {

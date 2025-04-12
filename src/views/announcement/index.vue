@@ -1,7 +1,7 @@
 <template>
-  <div style="margin-top: 20px; padding-left: 20px;">
+  <div class="announcement-container">
     <!-- 搜索栏 -->
-    <el-row :gutter="20">
+    <el-row :gutter="20" class="search-bar">
       <el-col :xs="24" :sm="12" :md="6">
         <el-input v-model="searchModel.title" placeholder="公告标题" />
       </el-col>
@@ -13,19 +13,26 @@
           clearable
         />
       </el-col>
-      <el-col :xs="24" :sm="12" :md="6">
+    </el-row>
+
+    <!-- 操作按钮 -->
+    <el-row class="action-bar">
+      <el-button type="success" icon="el-icon-plus" @click="openAddAnnouncementDialog">添加公告</el-button>
+      <el-button
+        type="danger"
+        icon="el-icon-delete"
+        :disabled="selectedAnnouncements.length === 0"
+        @click="batchDelete"
+      >
+        批量删除
+      </el-button>
+      <el-col :xs="24" :sm="12" :md="4">
         <el-button type="primary" icon="el-icon-search" @click="searchAnnouncements">查询</el-button>
       </el-col>
     </el-row>
 
-    <!-- 操作按钮 -->
-    <el-row style="margin-top: 20px;">
-      <el-button type="success" @click="openAddAnnouncementDialog">添加公告</el-button>
-      <el-button type="danger" @click="batchDelete">批量删除</el-button>
-    </el-row>
-
     <!-- 公告列表 -->
-    <el-row :gutter="20" style="margin-top: 20px;">
+    <el-row :gutter="20" class="announcement-list">
       <el-table
         :data="announcements"
         border
@@ -75,8 +82,8 @@
     <!-- 公告详情弹窗 -->
     <el-dialog title="公告详情" :visible.sync="viewAnnouncementDialogVisible" width="50%">
       <h3>{{ currentAnnouncement.title }}</h3>
-      <p style="color: gray; font-size: 12px;">发布时间：{{ currentAnnouncement.publishDate }}</p>
-      <div v-html="currentAnnouncement.content" />
+      <p class="publish-date">发布时间：{{ currentAnnouncement.publishDate }}</p>
+      <div class="announcement-content" v-html="currentAnnouncement.content" />
       <div slot="footer" class="dialog-footer">
         <el-button type="danger" @click="deleteAnnouncement(currentAnnouncement.announcementId)">删除</el-button>
         <el-button type="primary" @click="openEditAnnouncementDialog(currentAnnouncement)">修改</el-button>
@@ -351,8 +358,54 @@ export default {
 </script>
 
 <style scoped>
+.announcement-container {
+  margin-top: 20px;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+}
+
+.search-bar {
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center; /* 垂直居中对齐 */
+  gap: 10px; /* 控制列之间的间距 */
+}
+
+.action-bar {
+  margin-top: 20px;
+  display: flex;
+  gap: 10px;
+}
+
+.announcement-list {
+  margin-top: 20px;
+}
+
 .pagination {
   display: flex;
   justify-content: center;
+  margin-top: 20px;
+}
+
+.dialog-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.publish-date {
+  color: gray;
+  font-size: 12px;
+  margin-bottom: 10px;
+}
+
+.announcement-content {
+  margin-top: 20px;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #606266;
+  white-space: pre-wrap; /* 保留原始格式 */
 }
 </style>

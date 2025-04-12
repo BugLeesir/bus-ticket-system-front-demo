@@ -1,8 +1,8 @@
 <template>
   <div class="homepage-container">
     <!-- 公告栏 -->
-    <div class="announcement-section">
-      <h3>最新公告</h3>
+    <el-card class="announcement-section">
+      <h3 class="section-title">最新公告</h3>
       <el-table :data="latestAnnouncements" border style="width: 100%">
         <el-table-column prop="title" label="公告标题" />
         <el-table-column prop="publishDate" label="发布时间" width="180px" />
@@ -12,8 +12,10 @@
           </template>
         </el-table-column>
       </el-table>
-      <el-button type="primary" @click="openAllAnnouncementsDialog">查看全部公告</el-button>
-    </div>
+      <div class="section-footer">
+        <el-button type="primary" @click="openAllAnnouncementsDialog">查看全部公告</el-button>
+      </div>
+    </el-card>
 
     <!-- 查看全部公告弹窗 -->
     <el-dialog title="公告列表" :visible.sync="allAnnouncementsDialogVisible" width="60%">
@@ -41,18 +43,18 @@
     <!-- 公告详情弹窗 -->
     <el-dialog title="公告详情" :visible.sync="viewAnnouncementDialogVisible" width="50%">
       <h3>{{ currentAnnouncement.title }}</h3>
-      <p style="color: gray; font-size: 12px;">发布时间：{{ currentAnnouncement.publishDate }}</p>
-      <div v-html="currentAnnouncement.content" />
+      <p class="publish-date">发布时间：{{ currentAnnouncement.publishDate }}</p>
+      <div class="announcement-content" v-html="currentAnnouncement.content" />
       <div slot="footer" class="dialog-footer">
         <el-button @click="viewAnnouncementDialogVisible = false">关闭</el-button>
       </div>
     </el-dialog>
 
     <!-- 车次筛选 -->
-    <div class="bus-route-section">
-      <h3>车次信息</h3>
+    <el-card class="bus-route-section">
+      <h3 class="section-title">车次信息</h3>
       <el-row :gutter="20">
-        <el-col :xs="24" :sm="12" :md="4">
+        <el-col :xs="24" :sm="12" :md="3">
           <el-cascader
             v-model="searchModel.departure"
             :options="locations"
@@ -60,7 +62,7 @@
             clearable
           />
         </el-col>
-        <el-col :xs="24" :sm="12" :md="4">
+        <el-col :xs="24" :sm="12" :md="3">
           <el-cascader
             v-model="searchModel.destination"
             :options="locations"
@@ -68,10 +70,10 @@
             clearable
           />
         </el-col>
-        <el-col :xs="24" :sm="12" :md="4">
+        <el-col :xs="24" :sm="12" :md="3">
           <el-input v-model="searchModel.routeName" placeholder="车次名称" />
         </el-col>
-        <el-col :xs="24" :sm="24" :md="7">
+        <el-col :xs="24" :sm="24" :md="6">
           <el-date-picker
             v-model="searchModel.departureTime"
             type="datetime"
@@ -85,7 +87,7 @@
             style="width: 45%;"
           />
         </el-col>
-        <el-col :xs="24" :sm="12" :md="4">
+        <el-col :xs="24" :sm="12" :md="3">
           <el-select v-model="searchModel.priceRange" placeholder="票价">
             <el-option label="任意金额" value="any" />
             <el-option label="50以下" value="below50" />
@@ -93,15 +95,16 @@
             <el-option label="100以上" value="above100" />
           </el-select>
         </el-col>
+        <el-col :xs="24" :sm="12" :md="3">
+          <el-button type="primary" icon="el-icon-search" @click="searchBusRoutes">查询</el-button>
+        </el-col>
       </el-row>
-      <el-button type="primary" icon="el-icon-search" @click="searchBusRoutes">查询</el-button>
-
       <el-table :data="busRoutes" border style="width: 100%; margin-top: 20px;">
-        <el-table-column prop="routeName" label="车次名称" width="150px" />
+        <el-table-column prop="routeName" label="车次名称" width="180px" />
         <el-table-column prop="departure" label="出发地" width="180px" />
         <el-table-column prop="destination" label="目的地" width="180px" />
-        <el-table-column prop="departureTime" label="出发时间" width="300px" />
-        <el-table-column prop="arrivalTime" label="到达时间" width="300px" />
+        <el-table-column prop="departureTime" label="出发时间" width="240px" />
+        <el-table-column prop="arrivalTime" label="到达时间" width="240px" />
         <el-table-column prop="price" label="票价（单位：元）" width="150px" />
         <el-table-column prop="seatsTotal" label="总座位数" width="150px" />
         <el-table-column prop="seatsAvailable" label="可用座位数" width="150px" />
@@ -111,7 +114,7 @@
           </template>
         </el-table-column>
       </el-table>
-    </div>
+    </el-card>
 
     <!-- 分页 -->
     <el-pagination
@@ -449,11 +452,43 @@ export default {
 <style scoped>
 .homepage-container {
   padding: 20px;
+  background-color: #f9f9f9;
 }
+
 .announcement-section,
 .bus-route-section {
   margin-bottom: 40px;
+  padding: 20px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
 }
+
+.section-title {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.section-footer {
+  margin-top: 20px;
+  text-align: right;
+}
+
+.announcement-content {
+  margin-top: 20px;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #606266;
+  white-space: pre-wrap; /* 保留原始格式 */
+}
+
+.publish-date {
+  color: gray;
+  font-size: 12px;
+  margin-bottom: 10px;
+}
+
 .pagination {
   margin-top: 20px;
   text-align: center;

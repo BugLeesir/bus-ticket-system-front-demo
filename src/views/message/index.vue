@@ -44,7 +44,7 @@
       <div class="message-actions">
         <el-button type="primary" @click="replyMessage(message)">回复留言</el-button>
         <el-button type="text" @click="toggleReplies(message)">
-          {{ message.showReplies ? '收起回复' : '查看全部回复' }}
+          {{ message.showReplies ? `收起回复 (${message.replyList.length})` : `查看全部回复 (${message.replyList.length})` }}
         </el-button>
         <el-button
           v-if="canDeleteMessage(message)"
@@ -354,7 +354,10 @@ export default {
 <style scoped>
 .message-container {
   margin-top: 20px;
-  padding-left: 20px;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
 }
 
 .search-bar {
@@ -366,10 +369,12 @@ export default {
 }
 
 .message-card {
+  background-color: #ffffff;
   border: 1px solid #ebeef5;
-  border-radius: 4px;
-  padding: 10px;
-  margin-bottom: 10px;
+  border-radius: 8px;
+  padding: 15px;
+  margin-bottom: 15px;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.1);
 }
 
 .message-header {
@@ -381,6 +386,7 @@ export default {
 
 .message-username {
   font-weight: bold;
+  color: #333;
 }
 
 .message-time {
@@ -394,18 +400,21 @@ export default {
 }
 
 .message-actions {
-  margin-top: 10px;
+  margin-top: 15px;
   display: flex;
   gap: 10px;
 }
 
 .reply-list {
-  margin-top: 10px;
+  margin-top: 15px;
   padding-left: 20px;
   border-left: 2px solid #ebeef5;
 }
 
 .reply-item {
+  background-color: #f5f7fa;
+  border-radius: 4px;
+  padding: 10px;
   margin-bottom: 10px;
 }
 
@@ -433,5 +442,12 @@ export default {
 .pagination {
   display: flex;
   justify-content: center;
+  margin-top: 20px;
+}
+
+.dialog-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
 }
 </style>
