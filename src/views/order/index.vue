@@ -40,21 +40,17 @@
       </el-form>
 
       <!-- 订单表格 -->
-      <el-table
-        :data="orders"
-        border
-        style="width: 100%; margin-top: 20px;"
-        @selection-change="handleSelectionChange"
-      >
+      <el-table :data="orders" border style="width: 100%; margin-top: 20px;" @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55" />
-        <el-table-column prop="orderId" label="订单号" width="200px" />
-        <el-table-column prop="username" label="用户名" width="150px" />
+        <el-table-column prop="orderId" label="订单号" width="160px" />
+        <el-table-column prop="username" label="用户名" width="100px" />
+        <el-table-column prop="routeName" label="车次名称" width="120px" />
         <el-table-column label="订单状态" width="120px">
           <template slot-scope="scope">
             <span>{{ formatOrderStatus(scope.row.orderStatus) }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="createTime" label="创建时间" width="240px" />
+        <el-table-column prop="createTime" label="创建时间" width="210px" />
         <el-table-column label="操作" width="200px">
           <template slot-scope="scope">
             <div class="action-buttons">
@@ -101,6 +97,9 @@
         </el-form-item>
         <el-form-item label="用户名">
           <span>{{ orderDetail.username }}</span>
+        </el-form-item>
+        <el-form-item label="车次名称">
+          <span>{{ orderDetail.routeName }}</span>
         </el-form-item>
         <el-form-item label="订单状态">
           <span>{{ formatOrderStatus(orderDetail.orderStatus) }}</span>
@@ -185,20 +184,6 @@ export default {
     this.searchOrders()
   },
   methods: {
-    // 格式化订单状态
-    formatOrderStatus(status) {
-      const numericStatus = parseInt(status, 10) // 确保状态为数字类型
-      switch (numericStatus) {
-        case 0:
-          return '待支付'
-        case 1:
-          return '已支付'
-        case 2:
-          return '已取消'
-        default:
-          return '未知状态'
-      }
-    },
     // 查询订单
     searchOrders() {
       const data = {
@@ -221,17 +206,6 @@ export default {
           this.$message.error('查询订单失败，请稍后重试')
         })
     },
-    // 重置查询条件
-    resetSearch() {
-      this.searchModel = {
-        username: '',
-        orderStatus: '',
-        createTime: [],
-        pageNum: 1,
-        pageSize: 10
-      }
-      this.searchOrders()
-    },
     // 查看订单详情
     viewOrderDetails(order) {
       searchOrder(order.orderId)
@@ -249,6 +223,31 @@ export default {
           console.error('加载订单详情失败:', error)
           this.$message.error('加载订单详情失败，请稍后重试')
         })
+    },
+    // 格式化订单状态
+    formatOrderStatus(status) {
+      const numericStatus = parseInt(status, 10) // 确保状态为数字类型
+      switch (numericStatus) {
+        case 0:
+          return '待支付'
+        case 1:
+          return '已支付'
+        case 2:
+          return '已取消'
+        default:
+          return '未知状态'
+      }
+    },
+    // 重置查询条件
+    resetSearch() {
+      this.searchModel = {
+        username: '',
+        orderStatus: '',
+        createTime: [],
+        pageNum: 1,
+        pageSize: 10
+      }
+      this.searchOrders()
     },
     // 更新订单详情
     updateOrderDetails() {

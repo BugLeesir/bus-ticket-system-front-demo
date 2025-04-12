@@ -6,13 +6,14 @@
       </div>
       <el-table :data="orders" border style="width: 100%; margin-top: 20px;">
         <el-table-column prop="orderId" label="订单号" width="160px" />
-        <el-table-column label="订单状态" width="150px">
+        <el-table-column prop="routeName" label="车次名称" width="100px" />
+        <el-table-column label="订单状态" width="100px">
           <template slot-scope="scope">
             <span>{{ formatOrderStatus(scope.row.orderStatus) }}</span>
           </template>
         </el-table-column>
         <el-table-column prop="createTime" label="创建时间" width="200px" />
-        <el-table-column label="操作" width="250px">
+        <el-table-column label="操作" width="200px">
           <template slot-scope="scope">
             <div class="action-buttons">
               <el-button type="text" @click="viewOrderDetails(scope.row)">查看详情</el-button>
@@ -50,6 +51,7 @@
     <el-dialog title="订单详情" :visible.sync="orderDialogVisible" width="50%">
       <div>
         <p><strong>订单号：</strong>{{ orderDetail.orderId }}</p>
+        <p><strong>车次名称：</strong>{{ orderDetail.routeName }}</p>
         <p><strong>订单状态：</strong>{{ formatOrderStatus(orderDetail.orderStatus) }}</p>
         <p><strong>创建时间：</strong>{{ orderDetail.createTime }}</p>
         <p><strong>乘客信息：</strong></p>
@@ -130,6 +132,7 @@ export default {
         .then(response => {
           this.orderDetail = {
             ...response.data,
+            routeName: order.routeName, // 从订单列表中获取车次名称
             orderStatus: order.orderStatus // 从订单列表中获取订单状态
           }
           this.orderDialogVisible = true
