@@ -68,4 +68,4 @@ npm run lint -- --fix
 
 [MIT](https://github.com/your-repo/bus-ticket-system-front/blob/master/LICENSE) license.
 
-Copyright (c) 2025-present YourName
+Copyright (c) 2025-present BugLeesir

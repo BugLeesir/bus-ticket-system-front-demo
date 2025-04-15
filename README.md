@@ -1,5 +1,6 @@
 # Bus Ticket System Frontend
 
+[中文文档](./README-zh.md)
 > A Vue-based frontend project for a bus ticket system, providing features like order management, personal center, bus route search, and more.
 
 ## Features
@@ -68,4 +69,4 @@ Modern browsers and Internet Explorer 10+.
 
 [MIT](https://github.com/your-repo/bus-ticket-system-front/blob/master/LICENSE) license.
 
-Copyright (c) 2025-present YourName
+Copyright (c) 2025-present BugLeesir
