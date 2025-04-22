@@ -105,12 +105,32 @@ export const asyncRoutes = [
     path: '/order',
     component: Layout,
     redirect: '/order',
+    name: 'order',
+    meta: {
+      title: '订单管理',
+      icon: 'order',
+      roles: ['admin']
+    },
     children: [
       {
-        path: 'index',
-        name: 'order',
-        component: () => import('@/views/order/index'),
-        meta: { title: '订单管理', icon: 'order', roles: ['admin'] }
+        path: 'order-info',
+        component: () => import('@/views/order/order-info'), // Parent router-view
+        name: 'order-info',
+        meta:
+        {
+          title: '订单信息',
+          icon: 'order-info'
+        }
+      },
+      {
+        path: 'dashboard',
+        component: () => import('@/views/order/dashboard'),
+        name: 'dashboard',
+        meta:
+        {
+          title: '订单统计',
+          icon: 'dashboard'
+        }
       }
     ]
   },
